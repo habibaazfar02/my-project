@@ -1,221 +1,446 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Management System</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <title>Student Management System</title>
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #222;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        header {
-            background: #2563eb;
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
 
-        header h1 {
-            margin-bottom: 8px;
-        }
+    header {
+      background: #1f2937;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
 
-        .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 20px;
-        }
+    header h1 {
+      margin: 0 0 10px;
+    }
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
+    header p {
+      margin: 0;
+      color: #d1d5db;
+    }
 
-        .card h2 {
-            margin-bottom: 20px;
-        }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
 
-        form {
-            display: grid;
-            gap: 15px;
-        }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 25px;
+    }
 
-        input {
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-        }
+    h2 {
+      margin-top: 0;
+    }
 
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            background: #2563eb;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
+    .form-group {
+      margin-bottom: 15px;
+    }
 
-        button:hover {
-            background: #1d4ed8;
-        }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
+      font-size: 16px;
+    }
 
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
+    button {
+      margin-top: 5px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 7px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-        th {
-            background: #f1f5f9;
-        }
+    button:hover {
+      background: #1d4ed8;
+    }
 
-        .delete-btn {
-            background: #dc2626;
-            padding: 7px 12px;
-        }
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
 
-        .delete-btn:hover {
-            background: #b91c1c;
-        }
-    </style>
+    #message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 7px;
+      display: none;
+    }
+
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th {
+      background: #374151;
+      color: white;
+      padding: 13px;
+      text-align: left;
+    }
+
+    td {
+      padding: 13px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    #loading {
+      color: #6b7280;
+    }
+
+    .count {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 650px) {
+      .card {
+        padding: 20px;
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 550px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-    <header>
-        <h1>Student Management System</h1>
-        <p>Manage student information easily</p>
-    </header>
+  <header>
+    <h1>Student Management System</h1>
+    <p>Manage students using Netlify Database</p>
+  </header>
 
-    <div class="container">
+  <main class="container">
 
-        <div class="card">
-            <h2>Add Student</h2>
+    <!-- Add Student -->
+    <div class="card">
 
-            <form id="studentForm">
-                <input
-                    type="text"
-                    id="name"
-                    placeholder="Student Name"
-                    required
-                >
+      <h2>Add Student</h2>
 
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Email Address"
-                    required
-                >
+      <form id="studentForm">
 
-                <input
-                    type="text"
-                    id="course"
-                    placeholder="Course"
-                    required
-                >
+        <div class="form-group">
+          <label for="name">Student Name</label>
 
-                <input
-                    type="tel"
-                    id="phone"
-                    placeholder="Phone Number"
-                >
-
-                <button type="submit">Add Student</button>
-            </form>
+          <input
+            type="text"
+            id="name"
+            placeholder="Enter student name"
+            required
+          >
         </div>
 
-        <div class="card">
-            <h2>Students</h2>
+        <div class="form-group">
+          <label for="email">Email</label>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Course</th>
-                        <th>Phone</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-
-                <tbody id="studentList">
-                </tbody>
-            </table>
+          <input
+            type="email"
+            id="email"
+            placeholder="Enter student email"
+            required
+          >
         </div>
+
+        <button id="addButton" type="submit">
+          Add Student
+        </button>
+
+      </form>
+
+      <div id="message"></div>
 
     </div>
 
-    <script>
-        const form = document.getElementById("studentForm");
-        const studentList = document.getElementById("studentList");
 
-        let students = [];
+    <!-- Student List -->
+    <div class="card">
 
-        form.addEventListener("submit", function(event) {
-            event.preventDefault();
+      <h2>Student List</h2>
 
-            const student = {
-                name: document.getElementById("name").value,
-                email: document.getElementById("email").value,
-                course: document.getElementById("course").value,
-                phone: document.getElementById("phone").value
-            };
+      <p id="loading">
+        Loading students...
+      </p>
 
-            students.push(student);
+      <table id="studentTable" style="display: none;">
 
-            displayStudents();
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
 
-            form.reset();
+        <tbody id="studentList"></tbody>
+
+      </table>
+
+      <p id="studentCount" class="count"></p>
+
+    </div>
+
+  </main>
+
+  <footer>
+    Student Management System &copy; 2026
+  </footer>
+
+
+  <script>
+
+    const form = document.getElementById("studentForm");
+
+    const nameInput = document.getElementById("name");
+
+    const emailInput = document.getElementById("email");
+
+    const addButton = document.getElementById("addButton");
+
+    const message = document.getElementById("message");
+
+    const loading = document.getElementById("loading");
+
+    const table = document.getElementById("studentTable");
+
+    const studentList = document.getElementById("studentList");
+
+    const studentCount = document.getElementById("studentCount");
+
+
+    // Show message
+    function showMessage(text, type) {
+
+      message.textContent = text;
+
+      message.className = type;
+
+      message.style.display = "block";
+
+    }
+
+
+    // Load students
+    async function loadStudents() {
+
+      try {
+
+        const response = await fetch(
+          "/.netlify/functions/students"
+        );
+
+        if (!response.ok) {
+
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+
+        }
+
+        const students = await response.json();
+
+        studentList.innerHTML = "";
+
+        students.forEach(student => {
+
+          const row = document.createElement("tr");
+
+          const id = document.createElement("td");
+
+          const name = document.createElement("td");
+
+          const email = document.createElement("td");
+
+
+          id.textContent = student.id;
+
+          name.textContent = student.name;
+
+          email.textContent = student.email;
+
+
+          row.appendChild(id);
+
+          row.appendChild(name);
+
+          row.appendChild(email);
+
+
+          studentList.appendChild(row);
+
         });
 
-        function displayStudents() {
-            studentList.innerHTML = "";
 
-            students.forEach((student, index) => {
-                const row = document.createElement("tr");
+        loading.style.display = "none";
 
-                row.innerHTML = `
-                    <td>${student.name}</td>
-                    <td>${student.email}</td>
-                    <td>${student.course}</td>
-                    <td>${student.phone}</td>
-                    <td>
-                        <button
-                            class="delete-btn"
-                            onclick="deleteStudent(${index})">
-                            Delete
-                        </button>
-                    </td>
-                `;
+        table.style.display = "table";
 
-                studentList.appendChild(row);
-            });
+        studentCount.textContent =
+          `Total Students: ${students.length}`;
+
+      } catch (error) {
+
+        loading.textContent =
+          "Error loading students: " + error.message;
+
+        loading.style.color = "red";
+
+      }
+
+    }
+
+
+    // Add student
+    form.addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      const name = nameInput.value.trim();
+
+      const email = emailInput.value.trim();
+
+
+      if (!name || !email) {
+
+        showMessage(
+          "Please enter both name and email.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      addButton.disabled = true;
+
+      addButton.textContent = "Adding...";
+
+
+      try {
+
+        const response = await fetch(
+          "/.netlify/functions/students",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+              name: name,
+              email: email
+            })
+          }
+        );
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error || "Failed to add student"
+          );
+
         }
 
-        function deleteStudent(index) {
-            students.splice(index, 1);
-            displayStudents();
-        }
-    </script>
+
+        showMessage(
+          "Student added successfully!",
+          "success"
+        );
+
+
+        // Clear form
+        nameInput.value = "";
+
+        emailInput.value = "";
+
+
+        // Reload student list
+        await loadStudents();
+
+
+      } catch (error) {
+
+        showMessage(
+          "Error: " + error.message,
+          "error"
+        );
+
+      } finally {
+
+        addButton.disabled = false;
+
+        addButton.textContent = "Add Student";
+
+      }
+
+    });
+
+
+    // Load students when page opens
+    loadStudents();
+
+  </script>
 
 </body>
+
 </html>
